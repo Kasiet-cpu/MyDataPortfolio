@@ -1,4 +1,3 @@
-SELECT * FROM dbo.raw_data2
 SELECT * FROM dbo.raw_data
 -- Поиск и удаление дубликатов по URL в данных
 
