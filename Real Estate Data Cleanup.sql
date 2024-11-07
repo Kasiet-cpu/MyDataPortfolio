@@ -1,6 +1,6 @@
 SELECT * FROM dbo.raw_data2
 SELECT * FROM dbo.raw_data
--- Поиск и удаление дубликатов по URL в данных
+-- РџРѕРёСЃРє Рё СѓРґР°Р»РµРЅРёРµ РґСѓР±Р»РёРєР°С‚РѕРІ РїРѕ URL РІ РґР°РЅРЅС‹С…
 
 SELECT * 
 FROM 
@@ -37,7 +37,7 @@ FROM temp_raw_date
 WHERE
 	row_num > 1;
 
--- Очистка и нормализация данных о цене недвижимости
+-- РћС‡РёСЃС‚РєР° Рё РЅРѕСЂРјР°Р»РёР·Р°С†РёСЏ РґР°РЅРЅС‹С… Рѕ С†РµРЅРµ РЅРµРґРІРёР¶РёРјРѕСЃС‚Рё
 SELECT 
 	price,
 	CASE	
@@ -87,7 +87,7 @@ ALTER COLUMN price BIGINT;
 ALTER TABLE dbo.raw_data
 ALTER COLUMN lift INT;
 
---Парсинг и распределение данных по столбцам: area, city, postal_code
+--РџР°СЂСЃРёРЅРі Рё СЂР°СЃРїСЂРµРґРµР»РµРЅРёРµ РґР°РЅРЅС‹С… РїРѕ СЃС‚РѕР»Р±С†Р°Рј: area, city, postal_code
 
 ALTER TABLE dbo.raw_data
 ADD area NVARCHAR(255);
@@ -148,7 +148,7 @@ FROM
 JOIN
 	temp_result2 tr ON rw.location = tr.location;
 
--- Очистка и нормализация значений в столбце 'front road size
+-- РћС‡РёСЃС‚РєР° Рё РЅРѕСЂРјР°Р»РёР·Р°С†РёСЏ Р·РЅР°С‡РµРЅРёР№ РІ СЃС‚РѕР»Р±С†Рµ 'front road size
 
 SELECT
     [front road size],
@@ -168,13 +168,13 @@ SET [front road size] =CASE WHEN TRIM([front road size]) LIKE '%ft%' OR TRIM([fr
 FROM
     dbo.raw_data;
 
--- Очистка и нормализация значений в столбце 'garage_sq_ft
+-- РћС‡РёСЃС‚РєР° Рё РЅРѕСЂРјР°Р»РёР·Р°С†РёСЏ Р·РЅР°С‡РµРЅРёР№ РІ СЃС‚РѕР»Р±С†Рµ 'garage_sq_ft
 
 SELECT
 	garage_sq_ft,
     CASE
         WHEN CHARINDEX(' ', garage_sq_ft) > 0
-        THEN REPLACE(SUBSTRING(LOWER(garage_sq_ft), 1, CHARINDEX(' ', lower(garage_sq_ft)) - 1), 'В', '')
+        THEN REPLACE(SUBSTRING(LOWER(garage_sq_ft), 1, CHARINDEX(' ', lower(garage_sq_ft)) - 1), 'Г‚', '')
         ELSE garage_sq_ft
     END AS cleaned_garage_size
 FROM
@@ -182,18 +182,18 @@ FROM
 
 UPDATE dbo.raw_data
 SET garage_sq_ft = CASE WHEN CHARINDEX(' ', garage_sq_ft) > 0
-				   THEN REPLACE(SUBSTRING(LOWER(garage_sq_ft), 1, CHARINDEX(' ', lower(garage_sq_ft)) - 1), 'В', '')
+				   THEN REPLACE(SUBSTRING(LOWER(garage_sq_ft), 1, CHARINDEX(' ', lower(garage_sq_ft)) - 1), 'Г‚', '')
 				   ELSE garage_sq_ft
 				   END 
 FROM
     dbo.raw_data;
 
---Переименование столбцов 'front road size' и 'garage size
+--РџРµСЂРµРёРјРµРЅРѕРІР°РЅРёРµ СЃС‚РѕР»Р±С†РѕРІ 'front road size' Рё 'garage size
 
 EXEC sp_rename 'dbo.raw_data.[front road size]', 'front_road_ft', 'COLUMN';
 EXEC sp_rename 'dbo.raw_data.[garage size]', 'garage_sq_ft', 'COLUMN';
 
--- Очистка и нормализация данных по размеру гаража, добавление столбца для наличия гаража
+-- РћС‡РёСЃС‚РєР° Рё РЅРѕСЂРјР°Р»РёР·Р°С†РёСЏ РґР°РЅРЅС‹С… РїРѕ СЂР°Р·РјРµСЂСѓ РіР°СЂР°Р¶Р°, РґРѕР±Р°РІР»РµРЅРёРµ СЃС‚РѕР»Р±С†Р° РґР»СЏ РЅР°Р»РёС‡РёСЏ РіР°СЂР°Р¶Р°
 
 SELECT 
     CASE
@@ -234,7 +234,7 @@ WHERE garage_sq_ft IS NULL;
 ALTER TABLE dbo.raw_data
 ALTER COLUMN garage_sq_ft INT;
 
--- Очистка и преобразование размера недвижимости в числовой формат
+-- РћС‡РёСЃС‚РєР° Рё РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ СЂР°Р·РјРµСЂР° РЅРµРґРІРёР¶РёРјРѕСЃС‚Рё РІ С‡РёСЃР»РѕРІРѕР№ С„РѕСЂРјР°С‚
 
 SELECT DISTINCT
     [property size],
@@ -244,7 +244,7 @@ SELECT DISTINCT
                 REPLACE(
                     REPLACE(
                         SUBSTRING(LOWER([property size]), 1, CHARINDEX(' ', LOWER([property size])) - 1), 
-                        'В', ''), 
+                        'Г‚', ''), 
                     'sq', ''), 
                 ',', '')
             )
@@ -261,7 +261,7 @@ SET [property size] =
                 REPLACE(
                     REPLACE(
                         SUBSTRING(LOWER([property size]), 1, CHARINDEX(' ', LOWER([property size])) - 1), 
-                        'В', ''), 
+                        'Г‚', ''), 
                     'sq', ''), 
                 ',', '') 
             )
@@ -275,13 +275,13 @@ WHERE [property size] IS NOT NULL;
 ALTER TABLE raw_data
 ALTER COLUMN [property size] INT;
 
--- Очистка и преобразование общей площади в числовой формат
+-- РћС‡РёСЃС‚РєР° Рё РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РѕР±С‰РµР№ РїР»РѕС‰Р°РґРё РІ С‡РёСЃР»РѕРІРѕР№ С„РѕСЂРјР°С‚
 
 SELECT DISTINCT
 	[common area],
 	CASE	
 		WHEN CHARINDEX(' ' ,[common area]) > 0
-		THEN REPLACE(LTRIM(SUBSTRING([common area] ,1 ,CHARINDEX(' ' ,[common area])-1)),'В' ,'')
+		THEN REPLACE(LTRIM(SUBSTRING([common area] ,1 ,CHARINDEX(' ' ,[common area])-1)),'Г‚' ,'')
 		ELSE [common area]
 	END
 FROM dbo.raw_data
@@ -289,7 +289,7 @@ FROM dbo.raw_data
 UPDATE raw_data
 SET [common area] = CASE	
 		WHEN CHARINDEX(' ' ,[common area]) > 0
-		THEN REPLACE(LTRIM(SUBSTRING([common area] ,1 ,CHARINDEX(' ' ,[common area])-1)),'В' ,'')
+		THEN REPLACE(LTRIM(SUBSTRING([common area] ,1 ,CHARINDEX(' ' ,[common area])-1)),'Г‚' ,'')
 		ELSE [common area]
 	END;
 
@@ -301,7 +301,7 @@ WHERE
 ALTER TABLE dbo.raw_data
 ALTER COLUMN [common area] INT;
 
--- Очистка и преобразование количества комнат и ванных в числовой формат
+-- РћС‡РёСЃС‚РєР° Рё РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РєРѕР»РёС‡РµСЃС‚РІР° РєРѕРјРЅР°С‚ Рё РІР°РЅРЅС‹С… РІ С‡РёСЃР»РѕРІРѕР№ С„РѕСЂРјР°С‚
 
 SELECT DISTINCT
     bedrooms,
@@ -341,12 +341,12 @@ ALTER COLUMN bedrooms INT;
 ALTER TABLE raw_data
 ALTER COLUMN bathrooms INT;
 
--- Удаление лишних пробелов и символов (CHAR(160))
+-- РЈРґР°Р»РµРЅРёРµ Р»РёС€РЅРёС… РїСЂРѕР±РµР»РѕРІ Рё СЃРёРјРІРѕР»РѕРІ (CHAR(160))
 
 UPDATE dbo.raw_data
 SET interior = REPLACE(REPLACE(interior ,' ' ,''),CHAR(160) ,'');
 
--- Стандартизация значений
+-- РЎС‚Р°РЅРґР°СЂС‚РёР·Р°С†РёСЏ Р·РЅР°С‡РµРЅРёР№
 
 UPDATE dbo.raw_data
 SET interior = CASE 
@@ -363,7 +363,7 @@ SET interior = CASE
 END
 ;
 
--- Очистка и нормализация данных о стоимости обслуживания: удаление нерелевантных значений в столбце service_charge
+-- РћС‡РёСЃС‚РєР° Рё РЅРѕСЂРјР°Р»РёР·Р°С†РёСЏ РґР°РЅРЅС‹С… Рѕ СЃС‚РѕРёРјРѕСЃС‚Рё РѕР±СЃР»СѓР¶РёРІР°РЅРёСЏ: СѓРґР°Р»РµРЅРёРµ РЅРµСЂРµР»РµРІР°РЅС‚РЅС‹С… Р·РЅР°С‡РµРЅРёР№ РІ СЃС‚РѕР»Р±С†Рµ service_charge	
 
 UPDATE dbo.raw_data
 SET service_charge = NULL
@@ -376,7 +376,7 @@ WHERE
 	OR
 	LOWER(service_charge) IN (' At Actual',' At Actual.',' N/A',' Not Fixed yet',' Not fixed yet.','At Actual.');
 
--- Добавление нового столбца 'service_charge_status' для хранения информации о статусе включения стоимости обслуживания в аренду
+-- Р”РѕР±Р°РІР»РµРЅРёРµ РЅРѕРІРѕРіРѕ СЃС‚РѕР»Р±С†Р° 'service_charge_status' РґР»СЏ С…СЂР°РЅРµРЅРёСЏ РёРЅС„РѕСЂРјР°С†РёРё Рѕ СЃС‚Р°С‚СѓСЃРµ РІРєР»СЋС‡РµРЅРёСЏ СЃС‚РѕРёРјРѕСЃС‚Рё РѕР±СЃР»СѓР¶РёРІР°РЅРёСЏ РІ Р°СЂРµРЅРґСѓ
 
 ALTER TABLE dbo.raw_data
 ADD service_charge_status NVARCHAR(255);
@@ -397,8 +397,8 @@ SET service_charge = CASE
 		ELSE NULL
 	END;
 
--- Обновление и нормализация данных: изменение типа столбца 'year built' на DATE после добавления фиксированного дня (01-01),
--- удаление лишних пробелов в столбцах 'url', 'title', 'property type' и 'building registration type'
+-- РћР±РЅРѕРІР»РµРЅРёРµ Рё РЅРѕСЂРјР°Р»РёР·Р°С†РёСЏ РґР°РЅРЅС‹С…: РёР·РјРµРЅРµРЅРёРµ С‚РёРїР° СЃС‚РѕР»Р±С†Р° 'year built' РЅР° DATE РїРѕСЃР»Рµ РґРѕР±Р°РІР»РµРЅРёСЏ С„РёРєСЃРёСЂРѕРІР°РЅРЅРѕРіРѕ РґРЅСЏ (01-01),
+-- СѓРґР°Р»РµРЅРёРµ Р»РёС€РЅРёС… РїСЂРѕР±РµР»РѕРІ РІ СЃС‚РѕР»Р±С†Р°С… 'url', 'title', 'property type' Рё 'building registration type'
 
 ALTER TABLE dbo.raw_data
 ALTER COLUMN [year built] NVARCHAR(255);
@@ -417,7 +417,7 @@ SET url = LTRIM(url),
 	[property type] = LTRIM(url),
 	[building registration type] = LTRIM([building registration type])
 
--- Создание резервной копии данных таблицы raw_data
+-- РЎРѕР·РґР°РЅРёРµ СЂРµР·РµСЂРІРЅРѕР№ РєРѕРїРёРё РґР°РЅРЅС‹С… С‚Р°Р±Р»РёС†С‹ raw_data
 
 SELECT *
 INTO dbo.raw_data_backup
